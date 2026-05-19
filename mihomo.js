@@ -861,20 +861,20 @@ function main(config) {
   )
 
   // 3.5 组装最终结果
-  if (nonHongKongProxies.length > 0) {
-    generatedRegionGroups.unshift({
-      ...groupBaseOption,
-      name: NON_HK_LB_NAME,
-      type: 'load-balance',
-      strategy: 'round-robin',
-      proxies: nonHongKongProxies,
-      url: 'https://www.gstatic.com/generate_204',
-      interval: 300,
-      lazy: true,
-      'expected-status': 204,
-      icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png',
-    })
-  }
+generatedRegionGroups.unshift({
+  ...groupBaseOption,
+  name: NON_HK_LB_NAME,
+  type: 'load-balance',
+  strategy: 'round-robin',
+  'include-all-proxies': true,
+  'exclude-filter':
+    '(?i)(香港|hong[ -]?kong|\\bhk\\b|\\bhkg\\b|🇭🇰|剩余流量|套餐到期|下次重置剩余|重置剩余|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan)',
+  url: 'https://www.gstatic.com/generate_204',
+  interval: 300,
+  lazy: true,
+  'expected-status': 204,
+  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png',
+})
 
   config['proxy-groups'] = [...functionalGroups, ...generatedRegionGroups]
 
