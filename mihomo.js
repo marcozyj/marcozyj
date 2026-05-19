@@ -775,18 +775,18 @@ function main(config) {
   // 3.3 构建功能策略组
   const functionalGroups = []
 
-  functionalGroups.push({
-    ...groupBaseOption,
-    name: '默认节点',
-    type: 'select',
-    proxies: uniqPrepend(
-      [...regionGroupNames, '其他节点', '直连'].filter(
-        (n) => n !== '其他节点' || otherProxies.length > 0
-      ),
-      nonHongKongProxies.length > 0 ? [NON_HK_LB_NAME] : []
-    ),
-    icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Proxy.png',
-  })
+functionalGroups.push({
+  ...groupBaseOption,
+  name: '默认节点',
+  type: 'select',
+  proxies: [
+    NON_HK_LB_NAME,
+    ...regionGroupNames,
+    '其他节点',
+    '直连',
+  ].filter((n) => n !== '其他节点' || otherProxies.length > 0),
+  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Proxy.png',
+})
 
   serviceConfigs.forEach((svc) => {
     if (ruleOptions[svc.key]) {
