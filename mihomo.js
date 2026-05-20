@@ -345,22 +345,6 @@ const ruleProviders = {
 const multiplierRegex =
   /(?<=[xX✕✖⨉倍率])([1-9]+(\.\d+)*|0{1}\.\d+)(?=[xX✕✖⨉倍率])*/i
 
-// 非港轮询配置
-const NON_HK_LB_NAME = '🔁 非港轮询'
-const nonHongKongExcludeRegex =
-  /香港|hong[ -]?kong|\bhk\b|\bhkg\b|🇭🇰|剩余流量|套餐到期|下次重置剩余|重置剩余|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan/i
-
-function uniqPrepend(arr, items) {
-  if (!Array.isArray(arr)) arr = []
-  for (let i = items.length - 1; i >= 0; i--) {
-    const item = items[i]
-    if (!arr.includes(item)) {
-      arr.unshift(item)
-    }
-  }
-  return arr
-}
-
 // --- 2. 服务规则数据结构 ---
 // Icons 更新为 GitHub Raw
 const serviceConfigs = [
@@ -608,10 +592,12 @@ function main(config) {
   config['bind-address'] = '*'
   config['mode'] = 'rule'
   config['ipv6'] = ipv6
-  config['external-controller'] = '0.0.0.0:1906'
-  config['mixed-port'] = 7890
-  config['redir-port'] = 7891
-  config['tproxy-port'] = 7892
+  config['external-controller'] = '0.0.0.0:9090'
+  config['port'] = 7890
+  config['socks-port'] = 7891
+  config['mixed-port'] = 7892
+  config['redir-port'] = 7893
+  config['tproxy-port'] = 7894
   config['external-ui'] = 'ui'
   config['external-ui-url'] =
     `${githubProxy}https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip`
@@ -709,14 +695,11 @@ function main(config) {
       })
   )
   const otherProxies = []
-  const nonHongKongProxies = []
 
   for (let i = 0; i < proxyCount; i++) {
     const proxy = proxies[i]
     const name = proxy.name
     let matched = false
-
-    if (!name) continue
 
     // 检查倍率
     if (excludeHighPercentage) {
@@ -724,11 +707,6 @@ function main(config) {
       if (match && parseFloat(match[1]) > globalRatioLimit) {
         continue
       }
-    }
-
-    // 收集非港轮询节点：排除香港节点、订阅信息节点、流量/到期提示节点
-    if (!nonHongKongExcludeRegex.test(name)) {
-      nonHongKongProxies.push(name)
     }
 
     // 尝试匹配地区
@@ -775,18 +753,15 @@ function main(config) {
   // 3.3 构建功能策略组
   const functionalGroups = []
 
-functionalGroups.push({
-  ...groupBaseOption,
-  name: '默认节点',
-  type: 'select',
-  proxies: [
-    NON_HK_LB_NAME,
-    ...regionGroupNames,
-    '其他节点',
-    '直连',
-  ].filter((n) => n !== '其他节点' || otherProxies.length > 0),
-  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Proxy.png',
-})
+  functionalGroups.push({
+    ...groupBaseOption,
+    name: '默认节点',
+    type: 'select',
+    proxies: [...regionGroupNames, '其他节点', '直连'].filter(
+      (n) => n !== '其他节点' || otherProxies.length > 0
+    ),
+    icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Proxy.png',
+  })
 
   serviceConfigs.forEach((svc) => {
     if (ruleOptions[svc.key]) {
@@ -861,21 +836,6 @@ functionalGroups.push({
   )
 
   // 3.5 组装最终结果
-generatedRegionGroups.unshift({
-  ...groupBaseOption,
-  name: NON_HK_LB_NAME,
-  type: 'load-balance',
-  strategy: 'round-robin',
-  'include-all-proxies': true,
-  'exclude-filter':
-    '(?i)(香港|hong[ -]?kong|\\bhk\\b|\\bhkg\\b|🇭🇰|剩余流量|套餐到期|下次重置剩余|重置剩余|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan)',
-  url: 'https://www.gstatic.com/generate_204',
-  interval: 300,
-  lazy: true,
-  'expected-status': 204,
-  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png',
-})
-
   config['proxy-groups'] = [...functionalGroups, ...generatedRegionGroups]
 
   config['rules'] = rules
