@@ -35,7 +35,7 @@ const args =
     ? $arguments
     : {
         enable: true,
-        ruleSet: 'all',
+        ruleSet: 'apple;microsoft;github;google;openai;spotify;youtube;telegram;whatsapp;games;japan;ads',
         regionSet: 'all',
         excludeHighPercentage: true,
         globalRatioLimit: 2,
