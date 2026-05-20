@@ -35,7 +35,7 @@ const args =
     ? $arguments
     : {
         enable: true,
-        ruleSet: 'apple;microsoft;github;google;openai;spotify;youtube;telegram;whatsapp;games;japan;ads',
+        ruleSet: 'apple;microsoft;github;google;openai;spotify;youtube;telegram;ads',
         regionSet: 'all',
         excludeHighPercentage: true,
         globalRatioLimit: 2,
@@ -158,6 +158,18 @@ if (ruleSet === 'all') {
 
 // 初始规则
 const rules = [
+  // GPT支付/GPT注册分流
+  'DOMAIN-SUFFIX,paypal.com,GPT支付分流',
+  'DOMAIN,www.paypal.com,GPT支付分流',
+  'DOMAIN-SUFFIX,recaptcha.net,GPT支付分流',
+  'DOMAIN-SUFFIX,midtrans.com,GPT支付分流',
+  'DOMAIN,checkout.stripe.com,GPT支付分流',
+  'DOMAIN,pay.openai.com,GPT支付分流',
+
+  'DOMAIN-SUFFIX,chatgpt.com,GPT注册分流',
+  'DOMAIN-SUFFIX,openai.com,GPT注册分流',
+  'DOMAIN,auth.openai.com,GPT注册分流',
+
   'RULE-SET,applications,下载软件',
   'PROCESS-NAME-REGEX,(?i).*Oray.*,直连',
   'PROCESS-NAME-REGEX,(?i).*Sunlogin.*,直连',
@@ -189,6 +201,7 @@ const rules = [
   'DOMAIN-SUFFIX,nblink.cc,直连',
   'DOMAIN-SUFFIX,ionewu.com,直连',
   'DOMAIN-SUFFIX,vicp.net,直连',
+  
 ]
 
 // 地区定义 (Icons 更新为 GitHub Raw)
@@ -753,9 +766,48 @@ function main(config) {
   // 3.3 构建功能策略组
   const functionalGroups = []
 
-  functionalGroups.push({
-    ...groupBaseOption,
-    name: '默认节点',
+// GPT支付分流
+functionalGroups.push({
+  ...groupBaseOption,
+  name: 'GPT支付分流',
+  type: 'url-test',
+  'include-all': true,
+  'include-all-proxies': true,
+  'include-all-providers': true,
+  filter:
+    '(?i)(美国|美國|united states|usa|\\bus\\b|america|洛杉矶|圣何塞|西雅图|纽约|🇺🇸)',
+  'exclude-filter':
+    '(?i)(剩余流量|距离下次重置|下次重置剩余|重置剩余|套餐到期|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan|建议)',
+  url: 'https://www.gstatic.com/generate_204',
+  interval: 300,
+  lazy: false,
+  'expected-status': 204,
+  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ChatGPT.png',
+})
+
+// GPT注册分流
+functionalGroups.push({
+  ...groupBaseOption,
+  name: 'GPT注册分流',
+  type: 'load-balance',
+  strategy: 'round-robin',
+  'include-all': true,
+  'include-all-proxies': true,
+  'include-all-providers': true,
+  filter:
+    '(?i)(日本|东京|大阪|japan|tokyo|\\bjp\\b|🇯🇵)',
+  'exclude-filter':
+    '(?i)(剩余流量|距离下次重置|下次重置剩余|重置剩余|套餐到期|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan|建议)',
+  url: 'https://www.gstatic.com/generate_204',
+  interval: 300,
+  lazy: false,
+  'expected-status': 204,
+  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ChatGPT.png',
+})
+
+functionalGroups.push({
+  ...groupBaseOption,
+  name: '默认节点',
     type: 'select',
     proxies: [...regionGroupNames, '其他节点', '直连'].filter(
       (n) => n !== '其他节点' || otherProxies.length > 0
