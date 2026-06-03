@@ -775,7 +775,7 @@ functionalGroups.push({
   'include-all-proxies': true,
   'include-all-providers': true,
   filter:
-    '(?i)(美国|美國|united states|usa|\\bus\\b|america|洛杉矶|圣何塞|西雅图|纽约|🇺🇸)',
+    '(?i)(日本|东京|大阪|japan|tokyo|\\bjp\\b|🇯🇵)',
   'exclude-filter':
     '(?i)(剩余流量|距离下次重置|下次重置剩余|重置剩余|套餐到期|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan|建议)',
   url: 'https://www.gstatic.com/generate_204',
