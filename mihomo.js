@@ -158,18 +158,6 @@ if (ruleSet === 'all') {
 
 // 初始规则
 const rules = [
-  // GPT支付/GPT注册分流
-  'DOMAIN-SUFFIX,paypal.com,GPT支付分流',
-  'DOMAIN,www.paypal.com,GPT支付分流',
-  'DOMAIN-SUFFIX,recaptcha.net,GPT支付分流',
-  'DOMAIN-SUFFIX,midtrans.com,GPT支付分流',
-  'DOMAIN,checkout.stripe.com,GPT支付分流',
-  'DOMAIN,pay.openai.com,GPT支付分流',
-
-  'DOMAIN-SUFFIX,chatgpt.com,GPT注册分流',
-  'DOMAIN-SUFFIX,openai.com,GPT注册分流',
-  'DOMAIN,auth.openai.com,GPT注册分流',
-
   'RULE-SET,applications,下载软件',
   'PROCESS-NAME-REGEX,(?i).*Oray.*,直连',
   'PROCESS-NAME-REGEX,(?i).*Sunlogin.*,直连',
@@ -765,45 +753,6 @@ function main(config) {
 
   // 3.3 构建功能策略组
   const functionalGroups = []
-
-// GPT支付分流
-functionalGroups.push({
-  ...groupBaseOption,
-  name: 'GPT支付分流',
-  type: 'url-test',
-  'include-all': true,
-  'include-all-proxies': true,
-  'include-all-providers': true,
-  filter:
-    '(?i)(日本|东京|大阪|japan|tokyo|\\bjp\\b|🇯🇵)',
-  'exclude-filter':
-    '(?i)(剩余流量|距离下次重置|下次重置剩余|重置剩余|套餐到期|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan|建议)',
-  url: 'https://www.gstatic.com/generate_204',
-  interval: 300,
-  lazy: false,
-  'expected-status': 204,
-  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ChatGPT.png',
-})
-
-// GPT注册分流
-functionalGroups.push({
-  ...groupBaseOption,
-  name: 'GPT注册分流',
-  type: 'load-balance',
-  strategy: 'round-robin',
-  'include-all': true,
-  'include-all-proxies': true,
-  'include-all-providers': true,
-  filter:
-    '(?i)(日本|东京|大阪|japan|tokyo|\\bjp\\b|🇯🇵)',
-  'exclude-filter':
-    '(?i)(剩余流量|距离下次重置|下次重置剩余|重置剩余|套餐到期|到期时间|流量重置|traffic|expire|expiration|subscription|subscribe|reset|plan|建议)',
-  url: 'https://www.gstatic.com/generate_204',
-  interval: 300,
-  lazy: false,
-  'expected-status': 204,
-  icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ChatGPT.png',
-})
 
 functionalGroups.push({
   ...groupBaseOption,
