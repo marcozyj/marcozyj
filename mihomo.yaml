@@ -160,24 +160,21 @@ sniffer:
   skip-src-address: ['rule-set:telegram_ip','rule-set:direct-ltsc_ip']
 
 proxies:
-  - { name: IPV4优先, type: direct, udp: true, ip-version: ipv4-prefer }
-  - { name: IPV6优先, type: direct, udp: true, ip-version: ipv6-prefer }
-  - { name: 仅IPV4, type: direct, udp: true, ip-version: ipv4 }
-  - { name: 仅IPV6, type: direct, udp: true, ip-version: ipv6 }
+  []
 
 fall: &fall { type: fallback, <<: *use, empty-fallback: REJECT, hidden: true }
 
 dl: &dl { type: select, proxies: [机场1,机场2,代理连接,直接连接,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移] }
 
 proxy-groups:
-  - { name: link1, type: select, <<: *use-link1, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
-  - { name: link2, type: select, <<: *use-link2, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: 代理连接, type: select, proxies: [机场1,机场2,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移], icon: 'https://mihomo.echs.top/img/icon/Global.webp' }
-  - { name: 直接连接, type: select, proxies: [DIRECT,IPV4优先,IPV6优先,仅IPV4,仅IPV6], icon: 'https://mihomo.echs.top/img/icon/DIRECT.webp' }
-  - { name: 代理DNS, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
-  - { name: 代理QUIC, type: select, proxies: [PASS-RULE,REJECT], icon: 'https://mihomo.echs.top/img/icon/Settings.webp' }
+  - { name: 直接连接, type: select, proxies: [DIRECT], icon: 'https://mihomo.echs.top/img/icon/DIRECT.webp' }
   - { name: 国外AI, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/AI.webp' }
   - { name: TELEGRAM, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/Telegram.webp' }
+  - { name: 代理DNS, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
+  - { name: 代理QUIC, type: select, proxies: [PASS-RULE,REJECT], icon: 'https://mihomo.echs.top/img/icon/Settings.webp' }
+  - { name: link1, type: select, <<: *use-link1, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
+  - { name: link2, type: select, <<: *use-link2, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: 最低延迟, type: url-test, tolerance: 30, <<: *use, empty-fallback: REJECT, hidden: true, icon: 'https://mihomo.echs.top/img/icon/Fast.webp' }
   - { name: 香港|故障转移, <<: *fall, filter: '(?i)🇭🇰|香港|\\bHK\\b|\\bhongkong\\b|\\bhong\s?kong\\b', icon: 'https://mihomo.echs.top/img/flags/hk.svg' }
   - { name: 台湾|故障转移, <<: *fall, filter: '(?i)🇹🇼|台湾|\\bTW\\b|\\btaiwan\\b', icon: 'https://mihomo.echs.top/img/flags/tw.svg' }
