@@ -29,10 +29,10 @@ keep-alive-idle: 300
 etag-support: true
 # global-ua: 'Mozilla/5.0 (Linux; Android 16; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.215 Mobile Safari/537.36'
 # global-ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.217 Safari/537.36'
-external-controller: 127.0.0.1:9090
-secret: 'noah'
-external-ui: ./zashboard
-external-ui-url: 'https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip'
+# external-controller: 127.0.0.1:9090
+# secret: 'noah'
+# external-ui: ./zashboard
+# external-ui-url: 'https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip'
 profile: { store-selected: true, store-fake-ip: true }
 experimental: { quic-go-disable-gso: false, quic-go-disable-ecn: true, dialer-ip4p-convert: false }
 port: 0
