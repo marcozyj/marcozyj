@@ -8,7 +8,7 @@ providers: &providers { type: http, interval: 86400, proxy: 直接连接, header
 proxy-providers:
   link1: { <<: *providers, url: 'https://yinqinhangtian.polyinqin.com/s/de2e38e4c4368ee72e9e35ee4b292419', path: ./providers/link1.yaml }
   link2: { <<: *providers, url: 'https://emo.198790.xyz/api/v1/client/subscribe?token=a9c5dffe0f119218a0357286692dff04', path: ./providers/link2.yaml }
-#  link3: { <<: *providers, url: '订阅链接3', path: ./providers/link3.yaml }
+  link3: { <<: *providers, url: '订阅链接3', path: ./providers/link3.yaml }
 # 策略分组
 use: &use { use: [link1,link2] }
 
