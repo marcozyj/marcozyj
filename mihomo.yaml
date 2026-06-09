@@ -187,4 +187,4 @@ proxy-groups:
   - { name: 英国|故障转移, <<: *fall, filter: '(?i)🇬🇧|英国|\\bUK\\b|\\bGB\\b|\\bunitedkingdom\\b|\\bunited\s?kingdom\\b', icon: 'https://mihomo.echs.top/img/flags/gb.svg' }
   - { name: 法国|故障转移, <<: *fall, filter: '(?i)🇫🇷|法国|\\bFR\\b', icon: 'https://mihomo.echs.top/img/flags/fr.svg' }
   - { name: 荷兰|故障转移, <<: *fall, filter: '(?i)🇳🇱|荷兰|\\bNL\\b|\\bnetherlands?\\b', icon: 'https://mihomo.echs.top/img/flags/nl.svg' }
-  - { name: GLOBAL, type: select, proxies: [机场1,机场2,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移,代理连接,直接连接,代理DNS,代理QUIC,国外AI,TELEGRAM], hidden: true, icon: 'https://mihomo.echs.top/img/icon/Globefish.webp' }
+  - { name: GLOBAL, type: select, proxies: [link1,link2,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移,代理连接,直接连接,代理DNS,代理QUIC,国外AI,TELEGRAM], hidden: true, icon: 'https://mihomo.echs.top/img/icon/Globefish.webp' }
