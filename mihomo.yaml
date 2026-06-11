@@ -8,11 +8,15 @@ providers: &providers { type: http, interval: 86400, proxy: 直接连接, header
 proxy-providers:
   link1: { <<: *providers, url: 'https://yinqinhangtian.polyinqin.com/s/de2e38e4c4368ee72e9e35ee4b292419', path: ./providers/link1.yaml }
   link2: { <<: *providers, url: 'https://emo.198790.xyz/api/v1/client/subscribe?token=a9c5dffe0f119218a0357286692dff04', path: ./providers/link2.yaml }
-
+  link3: { <<: *providers, url: 'https://234.qzz.io/fsllistyaml', path: ./providers/link3.yaml }
+  link4: { <<: *providers, url: 'https://noahz.ccwu.cc/sub?token=9e79d4814076da5b7445e36ef020f162', path: ./providers/link4.yaml }
+  
 # 策略分组
 use-link1: &use-link1 { use: [link1] }
 use-link2: &use-link2 { use: [link2] }
-use: &use { use: [link1,link2] }
+use-link3: &use-link3 { use: [link3] }
+use-link4: &use-link4 { use: [link4] }
+use: &use { use: [link1,link2,link3,link4] }
 
 ipv6: true
 allow-lan: false
@@ -175,6 +179,8 @@ proxy-groups:
   - { name: 代理QUIC, type: select, proxies: [PASS-RULE,REJECT], icon: 'https://mihomo.echs.top/img/icon/Settings.webp' }
   - { name: link1, type: select, <<: *use-link1, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: link2, type: select, <<: *use-link2, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
+  - { name: link3, type: select, <<: *use-link3, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
+  - { name: link4, type: select, <<: *use-link4, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: 最低延迟, type: url-test, tolerance: 30, <<: *use, empty-fallback: REJECT, hidden: true, icon: 'https://mihomo.echs.top/img/icon/Fast.webp' }
   - { name: 香港|故障转移, <<: *fall, filter: '(?i)🇭🇰|香港|\\bHK\\b|\\bhongkong\\b|\\bhong\s?kong\\b', icon: 'https://mihomo.echs.top/img/flags/hk.svg' }
   - { name: 台湾|故障转移, <<: *fall, filter: '(?i)🇹🇼|台湾|\\bTW\\b|\\btaiwan\\b', icon: 'https://mihomo.echs.top/img/flags/tw.svg' }
