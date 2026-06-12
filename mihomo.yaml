@@ -10,7 +10,7 @@ proxy-providers:
   link2: { <<: *providers, url: 'https://emo.198790.xyz/api/v1/client/subscribe?token=a9c5dffe0f119218a0357286692dff04', path: ./providers/link2.yaml }
   link3: { <<: *providers, url: 'https://234.qzz.io/fsllistyaml', path: ./providers/link3.yaml }
 # 策略分组
-use: &use { use: [link1,link2] }
+use: &use { use: [link1,link2,link3] }
 
 
 
