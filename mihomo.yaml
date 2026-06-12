@@ -168,15 +168,15 @@ proxies:
 
 fall: &fall { type: fallback, <<: *use, empty-fallback: REJECT, hidden: true }
 
-dl: &dl { type: select, proxies: [机场1,机场2,代理连接,直接连接,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移] }
+dl: &dl { type: select, proxies: [link1,link2,link3,link4,代理连接,直接连接,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移] }
 
 proxy-groups:
-  - { name: 代理连接, type: select, proxies: [机场1,机场2,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移], icon: 'https://mihomo.echs.top/img/icon/Global.webp' }
+  - { name: 代理连接, type: select, proxies: [link1,link2,link3,link4,最低延迟,香港|故障转移,台湾|故障转移,新加坡|故障转移,日本|故障转移,韩国|故障转移,美国|故障转移,加拿大|故障转移,德国|故障转移,英国|故障转移,法国|故障转移,荷兰|故障转移], icon: 'https://mihomo.echs.top/img/icon/Global.webp' }
   - { name: 直接连接, type: select, proxies: [DIRECT], icon: 'https://mihomo.echs.top/img/icon/DIRECT.webp' }
   - { name: 国外AI, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/AI.webp' }
   - { name: TELEGRAM, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/Telegram.webp' }
   - { name: 代理DNS, <<: *dl, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
-  - { name: 代理QUIC, type: select, proxies: [PASS-RULE,REJECT], icon: 'https://mihomo.echs.top/img/icon/Settings.webp' }
+  - { name: 代理QUIC, type: select, proxies: [link1,link2,link3,link4,,REJECT], icon: 'https://mihomo.echs.top/img/icon/Settings.webp' }
   - { name: link1, type: select, <<: *use-link1, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: link2, type: select, <<: *use-link2, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
   - { name: link3, type: select, <<: *use-link3, icon: 'https://mihomo.echs.top/img/icon/Server.webp' }
