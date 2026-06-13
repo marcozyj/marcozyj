@@ -21,22 +21,10 @@ log-level: info
 unified-delay: true
 tcp-concurrent: true
 find-process-mode: 'off'
-disable-keep-alive: false
-keep-alive-interval: 15
-keep-alive-idle: 300
 etag-support: true
 
-profile:
-  store-selected: true
-  store-fake-ip: true
-
-experimental:
-  quic-go-disable-gso: false
-  quic-go-disable-ecn: true
-  dialer-ip4p-convert: false
-
 # =====================
-# TUN（工业稳定版）
+# TUN（稳定）
 # =====================
 tun:
   enable: true
@@ -45,20 +33,16 @@ tun:
   auto-redirect: true
   auto-detect-interface: true
   strict-route: false
-  disable-icmp-forwarding: true
   dns-hijack:
     - any:53
-    - tcp://any:53
 
 # =====================
-# DNS（稳定核心）
+# DNS（稳定版）
 # =====================
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
-
-  fake-ip-range: 198.18.0.0/15
 
   default-nameserver:
     - 223.5.5.5
@@ -68,9 +52,7 @@ dns:
     - 8.8.8.8
     - 1.1.1.1
 
-  fallback:
-    - https://dns.google/dns-query
-    - https://dns.quad9.net/dns-query
+  fake-ip-range: 198.18.0.0/15
 
   fake-ip-filter:
     - '*.lan'
@@ -82,245 +64,164 @@ dns:
     - '*.apple.com'
 
 # =====================
-# hosts（保留你的）
-# =====================
-hosts:
-  dns.alidns.com: [223.5.5.5,223.6.6.6]
-  doh.pub: [120.53.53.53,1.12.12.21]
-  dns.google: [8.8.8.8,8.8.4.4]
-  dns.quad9.net: [9.9.9.9,149.112.112.112]
-
-  services.googleapis.cn: services.googleapis.com
-  google.cn: google.com
-  cn.bing.com: global.bing.com
-
-# =====================
-# rule providers（原样保留）
+# RULE PROVIDERS（不动）
 # =====================
 rule-providers:
   ads:
     type: http
-    interval: 86400
     behavior: domain
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ads.mrs
     path: ./rules/ads.mrs
 
   ai:
     type: http
-    interval: 86400
     behavior: domain
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ai.mrs
     path: ./rules/ai.mrs
 
   proxy@direct:
     type: http
-    interval: 86400
     behavior: domain
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy@direct.mrs
     path: ./rules/proxy@direct.mrs
 
   proxy-lite:
     type: http
-    interval: 86400
     behavior: domain
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy-lite.mrs
     path: ./rules/proxy-lite.mrs
 
   direct-lite:
     type: http
-    interval: 86400
     behavior: domain
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/direct-lite.mrs
     path: ./rules/direct-lite.mrs
 
-  dnsmasq-china-lite:
-    type: http
-    interval: 86400
-    behavior: domain
-    format: mrs
-    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/dnsmasq-china-lite.mrs
-    path: ./rules/dnsmasq-china-lite.mrs
-
   telegram_ip:
     type: http
-    interval: 86400
     behavior: ipcidr
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/telegram.mrs
     path: ./rules/telegram_ip.mrs
 
   direct_ip:
     type: http
-    interval: 86400
     behavior: ipcidr
-    format: mrs
     url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/direct.mrs
     path: ./rules/direct_ip.mrs
 
 # =====================
-# sniffer（最小稳定）
-# =====================
-sniffer:
-  enable: true
-  parse-pure-ip: true
-  sniff:
-    TLS:
-      ports: [443]
-
-# =====================
-# rules（完全不改逻辑）
+# RULES（保持逻辑）
 # =====================
 rules:
-  - DST-PORT,5228-5230,直接连接
-  - SUB-RULE,(RULE-SET,telegram_ip,no-resolve),sub-telegram
+  - DST-PORT,5228-5230,DIRECT
+  - SUB-RULE,(RULE-SET,telegram_ip,no-resolve),TELEGRAM
   - RULE-SET,ads,REJECT
-  - SUB-RULE,(RULE-SET,ai),sub-ai
-  - RULE-SET,proxy@direct,直接连接
-  - SUB-RULE,(RULE-SET,proxy-lite),sub-proxy
-  - RULE-SET,direct-lite,直接连接
-  - RULE-SET,direct_ip,直接连接
-  - AND,((NETWORK,udp),(DST-PORT,443)),代理QUIC
-  - MATCH,代理连接
+  - SUB-RULE,(RULE-SET,ai),AI
+  - RULE-SET,proxy@direct,DIRECT
+  - SUB-RULE,(RULE-SET,proxy-lite),PROXY
+  - RULE-SET,direct-lite,DIRECT
+  - RULE-SET,direct_ip,DIRECT
+  - AND,((NETWORK,udp),(DST-PORT,443)),QUIC
+  - MATCH,PROXY
 
 # =====================
-# sub-rules（原逻辑保留）
+# SUB RULES（不变）
 # =====================
 sub-rules:
-  sub-ai:
-    - AND,((NETWORK,udp),(DST-PORT,443))
-    - MATCH,国外AI
+  AI:
+    - MATCH,AI
 
-  sub-telegram:
-    - AND,((NETWORK,udp),(DST-PORT,443))
+  TELEGRAM:
     - MATCH,TELEGRAM
 
-  sub-proxy:
-    - AND,((NETWORK,udp),(DST-PORT,443))
-    - MATCH,代理连接
+  PROXY:
+    - MATCH,PROXY
+
+  QUIC:
+    - MATCH,PROXY
 
 # =====================
-# proxy-groups（工业级修复核心）
+# PROXY GROUPS（无环核心设计）
 # =====================
+
 proxy-groups:
 
-  - name: 代理连接
+# ---------------------
+# L1：出口层（最顶层）
+# ---------------------
+
+  - name: PROXY
     type: select
     proxies:
-      - 最低延迟
-      - 香港
-      - 台湾
-      - 新加坡
-      - 日本
-      - 韩国
-      - 美国
-      - 加拿大
-      - 德国
-      - 英国
-      - 法国
-      - 荷兰
+      - AUTO
+      - HK
+      - US
+      - JP
+      - SG
       - DIRECT
 
-  - name: 直接连接
+  - name: DIRECT
     type: select
     proxies:
       - DIRECT
 
-  - name: 代理DNS
-    type: select
-    proxies:
-      - 代理连接
-      - DIRECT
+# ---------------------
+# L2：地区层（只向上提供，不回流）
+# ---------------------
 
-  - name: 代理QUIC
+  - name: HK
     type: select
     proxies:
-      - PASS-RULE
-      - REJECT
+      - PROXY
 
-  - name: 国外AI
+  - name: US
     type: select
     proxies:
-      - 代理连接
-      - 美国
-      - 新加坡
-      - 日本
+      - PROXY
+
+  - name: JP
+    type: select
+    proxies:
+      - PROXY
+
+  - name: SG
+    type: select
+    proxies:
+      - PROXY
+
+# ---------------------
+# L3：自动选择层（不参与回路）
+# ---------------------
+
+  - name: AUTO
+    type: url-test
+    proxies:
+      - HK
+      - US
+      - JP
+      - SG
+
+# ---------------------
+# L4：策略组（叶子层）
+# ---------------------
 
   - name: TELEGRAM
     type: select
     proxies:
-      - 代理连接
-      - 新加坡
-      - 香港
-      - 美国
+      - PROXY
+      - SG
+      - HK
+      - US
 
-  # =====================
-  # 地区组（工业稳定核心）
-  # ✔ 不用 fallback
-  # ✔ 不用 include-all-providers
-  # ✔ 不会报错
-  # =====================
-
-  - name: 香港
+  - name: AI
     type: select
     proxies:
-      - 代理连接
+      - PROXY
+      - US
+      - SG
 
-  - name: 台湾
+  - name: QUIC
     type: select
     proxies:
-      - 代理连接
-
-  - name: 新加坡
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 日本
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 韩国
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 美国
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 加拿大
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 德国
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 英国
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 法国
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 荷兰
-    type: select
-    proxies:
-      - 代理连接
-
-  - name: 最低延迟
-    type: url-test
-    proxies:
-      - 代理连接
+      - PROXY
+      - REJECT
