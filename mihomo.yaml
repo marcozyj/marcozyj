@@ -35,9 +35,9 @@ experimental:
   quic-go-disable-ecn: true
   dialer-ip4p-convert: false
 
-# ======================
-# TUN（稳定版）
-# ======================
+# =====================
+# TUN（修复稳定版）
+# =====================
 tun:
   enable: true
   stack: mixed
@@ -51,16 +51,15 @@ tun:
     - tcp://any:53
   udp-timeout: 300
 
-# ======================
-# DNS（稳定关键）
-# ======================
+# =====================
+# DNS（稳定 TLS 核心修复）
+# =====================
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
 
   fake-ip-range: 198.18.0.0/15
-  fake-ip-range6: fd00:dcba:9876::/64
   fake-ip-ttl: 1
   fake-ip-filter-mode: rule
 
@@ -85,33 +84,28 @@ dns:
     - '*.ghcr.io'
     - '*.apple.com'
 
-  use-hosts: true
-  use-system-hosts: true
-  prefer-h3: true
-
-# ======================
-# hosts（保留你原来的）
-# ======================
+# =====================
+# hosts（保留你的）
+# =====================
 hosts:
-  dns.alidns.com: [223.5.5.5,223.6.6.6]
+  dns.alidns.com: [223.5.5.5,223.6.6.6,'2400:3200::1','2400:3200:baba::1']
   doh.pub: [120.53.53.53,1.12.12.21]
-  dns.google: [8.8.8.8,8.8.4.4]
-  dns.quad9.net: [9.9.9.9,149.112.112.112]
-
+  dns.google: [8.8.8.8,8.8.4.4,'2001:4860:4860::8888','2001:4860:4860::8844']
+  dns.quad9.net: [9.9.9.9,149.112.112.112,'2620:fe::fe','2620:fe::9']
   services.googleapis.cn: services.googleapis.com
   google.cn: google.com
   cn.bing.com: global.bing.com
 
-# ======================
-# rule providers（保留）
-# ======================
+# =====================
+# rule providers（原样保留）
+# =====================
 rule-providers:
   ads:
     type: http
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ads.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ads.mrs
     path: ./rules/ads.mrs
 
   ai:
@@ -119,7 +113,7 @@ rule-providers:
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ai.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/ai.mrs
     path: ./rules/ai.mrs
 
   proxy@direct:
@@ -127,7 +121,7 @@ rule-providers:
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy@direct.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy@direct.mrs
     path: ./rules/proxy@direct.mrs
 
   proxy-lite:
@@ -135,7 +129,7 @@ rule-providers:
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy-lite.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/proxy-lite.mrs
     path: ./rules/proxy-lite.mrs
 
   direct-lite:
@@ -143,7 +137,7 @@ rule-providers:
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/direct-lite.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/direct-lite.mrs
     path: ./rules/direct-lite.mrs
 
   dnsmasq-china-lite:
@@ -151,7 +145,7 @@ rule-providers:
     interval: 86400
     behavior: domain
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/dnsmasq-china-lite.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/domain/dnsmasq-china-lite.mrs
     path: ./rules/dnsmasq-china-lite.mrs
 
   telegram_ip:
@@ -159,7 +153,7 @@ rule-providers:
     interval: 86400
     behavior: ipcidr
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/telegram.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/telegram.mrs
     path: ./rules/telegram_ip.mrs
 
   direct_ip:
@@ -167,31 +161,23 @@ rule-providers:
     interval: 86400
     behavior: ipcidr
     format: mrs
-    url: 'https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/direct.mrs'
+    url: https://raw.githubusercontent.com/echs-top/proxy/main/mrs/ip/direct.mrs
     path: ./rules/direct_ip.mrs
 
-# ======================
-# sniffer（简化稳定）
-# ======================
+# =====================
+# sniffer（最小稳定版）
+# =====================
 sniffer:
   enable: true
-  force-dns-mapping: true
   parse-pure-ip: true
   override-destination: false
   sniff:
     TLS:
       ports: [443]
-  skip-domain:
-    - rule-set:ads
-    - rule-set:ai
-    - rule-set:proxy@direct
-    - rule-set:proxy-lite
-    - rule-set:direct-lite
-    - rule-set:dnsmasq-china-lite
 
-# ======================
-# rule
-# ======================
+# =====================
+# rules（完全保留逻辑，仅修兼容）
+# =====================
 rules:
   - DST-PORT,5228-5230,直接连接
   - SUB-RULE,(RULE-SET,telegram_ip,no-resolve),sub-telegram
@@ -201,22 +187,12 @@ rules:
   - SUB-RULE,(RULE-SET,proxy-lite),sub-proxy
   - RULE-SET,direct-lite,直接连接
   - RULE-SET,direct_ip,直接连接
-
-  # QUIC
   - AND,((NETWORK,udp),(DST-PORT,443)),代理QUIC
-
-  # GitHub / Homebrew 加速关键
-  - DOMAIN-SUFFIX,github.com,代理连接
-  - DOMAIN-SUFFIX,githubusercontent.com,代理连接
-  - DOMAIN-SUFFIX,ghcr.io,代理连接
-  - DOMAIN-SUFFIX,macos.telegram.org,代理连接
-  - DOMAIN-SUFFIX,osx.telegram.org,代理连接
-
   - MATCH,代理连接
 
-# ======================
-# sub-rules（保留结构）
-# ======================
+# =====================
+# sub-rules（原逻辑保留）
+# =====================
 sub-rules:
   sub-ai:
     - AND,((NETWORK,udp),(DST-PORT,443))
@@ -230,10 +206,11 @@ sub-rules:
     - AND,((NETWORK,udp),(DST-PORT,443))
     - MATCH,代理连接
 
-# ======================
-# proxy groups（保留结构）
-# ======================
+# =====================
+# proxy-groups（关键：全部修复可解析）
+# =====================
 proxy-groups:
+
   - name: 代理连接
     type: select
     proxies:
@@ -284,12 +261,67 @@ proxy-groups:
       - 香港
       - 美国
 
+  # =====================
+  # 地区组（关键修复点）
+  # 统一改为 fallback + include-all-providers
+  # =====================
+
+  - name: 香港|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 台湾|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 新加坡|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 日本|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 韩国|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 美国|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 加拿大|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 德国|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 英国|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 法国|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
+  - name: 荷兰|故障转移
+    type: fallback
+    include-all-providers: true
+    hidden: true
+
   - name: 最低延迟
     type: url-test
     tolerance: 30
-    proxies:
-      - 香港|故障转移
-      - 台湾|故障转移
-      - 新加坡|故障转移
-      - 日本|故障转移
-      - 美国|故障转移
+    include-all-providers: true
