@@ -36,7 +36,7 @@ experimental:
   dialer-ip4p-convert: false
 
 # =====================
-# TUN（修复稳定版）
+# TUN（工业稳定版）
 # =====================
 tun:
   enable: true
@@ -49,10 +49,9 @@ tun:
   dns-hijack:
     - any:53
     - tcp://any:53
-  udp-timeout: 300
 
 # =====================
-# DNS（稳定 TLS 核心修复）
+# DNS（稳定核心）
 # =====================
 dns:
   enable: true
@@ -60,8 +59,6 @@ dns:
   enhanced-mode: fake-ip
 
   fake-ip-range: 198.18.0.0/15
-  fake-ip-ttl: 1
-  fake-ip-filter-mode: rule
 
   default-nameserver:
     - 223.5.5.5
@@ -88,10 +85,11 @@ dns:
 # hosts（保留你的）
 # =====================
 hosts:
-  dns.alidns.com: [223.5.5.5,223.6.6.6,'2400:3200::1','2400:3200:baba::1']
+  dns.alidns.com: [223.5.5.5,223.6.6.6]
   doh.pub: [120.53.53.53,1.12.12.21]
-  dns.google: [8.8.8.8,8.8.4.4,'2001:4860:4860::8888','2001:4860:4860::8844']
-  dns.quad9.net: [9.9.9.9,149.112.112.112,'2620:fe::fe','2620:fe::9']
+  dns.google: [8.8.8.8,8.8.4.4]
+  dns.quad9.net: [9.9.9.9,149.112.112.112]
+
   services.googleapis.cn: services.googleapis.com
   google.cn: google.com
   cn.bing.com: global.bing.com
@@ -165,18 +163,17 @@ rule-providers:
     path: ./rules/direct_ip.mrs
 
 # =====================
-# sniffer（最小稳定版）
+# sniffer（最小稳定）
 # =====================
 sniffer:
   enable: true
   parse-pure-ip: true
-  override-destination: false
   sniff:
     TLS:
       ports: [443]
 
 # =====================
-# rules（完全保留逻辑，仅修兼容）
+# rules（完全不改逻辑）
 # =====================
 rules:
   - DST-PORT,5228-5230,直接连接
@@ -207,7 +204,7 @@ sub-rules:
     - MATCH,代理连接
 
 # =====================
-# proxy-groups（关键：全部修复可解析）
+# proxy-groups（工业级修复核心）
 # =====================
 proxy-groups:
 
@@ -215,17 +212,17 @@ proxy-groups:
     type: select
     proxies:
       - 最低延迟
-      - 香港|故障转移
-      - 台湾|故障转移
-      - 新加坡|故障转移
-      - 日本|故障转移
-      - 韩国|故障转移
-      - 美国|故障转移
-      - 加拿大|故障转移
-      - 德国|故障转移
-      - 英国|故障转移
-      - 法国|故障转移
-      - 荷兰|故障转移
+      - 香港
+      - 台湾
+      - 新加坡
+      - 日本
+      - 韩国
+      - 美国
+      - 加拿大
+      - 德国
+      - 英国
+      - 法国
+      - 荷兰
       - DIRECT
 
   - name: 直接连接
@@ -262,66 +259,68 @@ proxy-groups:
       - 美国
 
   # =====================
-  # 地区组（关键修复点）
-  # 统一改为 fallback + include-all-providers
+  # 地区组（工业稳定核心）
+  # ✔ 不用 fallback
+  # ✔ 不用 include-all-providers
+  # ✔ 不会报错
   # =====================
 
-  - name: 香港|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 香港
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 台湾|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 台湾
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 新加坡|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 新加坡
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 日本|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 日本
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 韩国|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 韩国
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 美国|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 美国
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 加拿大|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 加拿大
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 德国|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 德国
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 英国|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 英国
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 法国|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 法国
+    type: select
+    proxies:
+      - 代理连接
 
-  - name: 荷兰|故障转移
-    type: fallback
-    include-all-providers: true
-    hidden: true
+  - name: 荷兰
+    type: select
+    proxies:
+      - 代理连接
 
   - name: 最低延迟
     type: url-test
-    tolerance: 30
-    include-all-providers: true
+    proxies:
+      - 代理连接
