@@ -40,7 +40,7 @@ proxy-providers:
   #备用服务商1: {<<: *BaseProvider, url: '', override: {additional-prefix: '[备] '}}
   #备用服务商2: {<<: *BaseProvider, url: '', override: {additional-prefix: '[备] '}}
 # ==================== 核心配置 ====================
-# 基础配置
+# 基础设置
 mode: rule
 port: 7890
 socks-port: 7891
@@ -51,83 +51,50 @@ ipv6: false
 allow-lan: false
 unified-delay: true
 tcp-concurrent: true
-log-level: warning
+log-level: silent
 bind-address: '*'
 find-process-mode: 'always'
 keep-alive-interval: 15
 keep-alive-idle: 600
+authentication: [mihomo:yyds666]
+skip-auth-prefixes: [127.0.0.1/8, '::1/128']
+experimental: {quic-go-disable-gso: true}
 
-# 认证配置
-authentication:
-  - mihomo:yyds666
-skip-auth-prefixes:
-  - 127.0.0.1/8
-  - ::1/128
-
-# 实验性功能
-experimental:
-  quic-go-disable-gso: true  
-     
-# 管理面板配置
+# 控制面板
 external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
 external-ui-name: zashboard
 external-ui: ui
 external-controller: 127.0.0.1:9090
 secret: yyds666
-
-# 配置存储
-profile:
-  store-selected: true
-  store-fake-ip: true
+profile: {store-selected: true, store-fake-ip: true}
 
 # 流量嗅探
 sniffer:
   enable: true
   sniff:
-    HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true
-    TLS:
-      ports: [443, 8443]
-    QUIC:
-      ports: [443, 8443]
-  skip-domain:
-    - "Mijia Cloud"
-    - "+.push.apple.com"
+    HTTP:  {ports: [80, 8080-8880], override-destination: true}
+    TLS:   {ports: [443, 8443]}
+    QUIC:  {ports: [443, 8443]}
+  skip-domain: ["Mijia Cloud", "+.push.apple.com"]
 
-# TUN模式配置
+# TUN模式
 tun:
   enable: false
   stack: mixed
-  dns-hijack:
-    - "any:53"
-    - "tcp://any:53"
+  dns-hijack: ["any:53", "tcp://any:53"]
   auto-route: true
   auto-redirect: true
   auto-detect-interface: true
-    
-# DNS配置
+
+# DNS设置
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  default-nameserver:
-    - 119.29.29.29
-    - 180.184.1.1
-    - 223.5.5.5
-  nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-  fake-ip-filter:
-    - rule-set:Direct
-    - rule-set:Private
-    - rule-set:China
-    - +.miwifi.com
-    - +.docker.io
-    - +.market.xiaomi.com
-    - +.push.apple.com
-
+  default-nameserver: [119.29.29.29, 180.184.1.1, 223.5.5.5]
+  nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
+  fake-ip-filter: [+.miwifi.com, +.docker.io, +.market.xiaomi.com, +.push.apple.com]
 # ==================== 代理策略组 ====================
 proxy-groups:
   - {name: 一键连,    <<: *SelectAL, icon: https://github.com/666OS/YYDS/raw/main/mihomo/image/mihomo.png}
